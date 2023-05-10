@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# set the directory path
+dir_path="sokobanLevels/"
+
+# iterate over the files and read their contents using Python
+for filepath in "$dir_path"*
+do
+    # check if the item is a file
+    if [ -f "$filepath" ]; then
+        # extract the filename from the full path
+        filename=$(basename -- "$filepath")
+
+        # remove the file extension from the filename
+        filename="${filename%.*}"
+
+        # print spacer before output
+        echo "-----------------------"
+        echo "Level: ${filename}"
+        echo "-----------------------"
+
+        # run the Python script and redirect the output to a file
+        result=$(python sokoban.py -l "$filename.txt" -m astar)
+
+        # split the output into map and solution
+        map=$(echo "$result" | awk 'BEGIN {RS="";FS="\n"}{print $1}')
+        solution=$(echo "$result" | awk 'BEGIN {RS="";FS="\n"}{print $2}')
+
+        # print output and spacer before saving to file
+        echo "Map: ${map}"
+        echo "Solution: ${solution}"
+        echo "-----------------------"
+
+        # save map and solution to file
+        echo "${map}" > "${dir_path}solutions/solution_${filename}.txt"
+        echo "${solution}" >> "${dir_path}solutions/solution_${filename}.txt"
+    fi
+done
+
