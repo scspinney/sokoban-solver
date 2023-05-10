@@ -35,4 +35,9 @@ and inside that script you can change the number of jobs (default: 10) that are 
 ```
 sbatch --array=1-$(find sokobanLevels/ -maxdepth 1 -type f | wc -l) run_solver_all_slurm_safe
 ```
-For a version that skips existing files that have a solution file already.
+For a version that skips existing files that have a solution file already. If you want to run not as an array job but interactively (sometimes faster) run the folling:
+
+```
+ bash run_solver_all
+ ```
+ 
