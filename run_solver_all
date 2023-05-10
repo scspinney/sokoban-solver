@@ -13,6 +13,11 @@ do
 
         # remove the file extension from the filename
         filename="${filename%.*}"
+        # Check if a solution file already exists
+        if [ -f "sokobanLevels/solutions/solution_${filename}.txt" ]; then
+            echo "Solution file already exists for ${filename}. Skipping this file."
+            continue
+        fi
 
         # print spacer before output
         echo "-----------------------"
@@ -21,19 +26,26 @@ do
 
         # run the Python script and redirect the output to a file
         result=$(python sokoban.py -l "$filename.txt" -m astar)
+        # Split the output into map and solution
+        IFS=$'\n' read -rd '' -a output_lines <<< "$result"
+        map=("${output_lines[@]:0:7}")
+        solution="${output_lines[7]}"
+        runtime="${output_lines[8]}"
 
-        # split the output into map and solution
-        map=$(echo "$result" | awk 'BEGIN {RS="";FS="\n"}{print $1}')
-        solution=$(echo "$result" | awk 'BEGIN {RS="";FS="\n"}{print $2}')
-
-        # print output and spacer before saving to file
-        echo "Map: ${map}"
+        # Print output and spacer before saving to file
+        echo "Map: "
+        for i in "${map[@]}"; do
+            echo "$i"
+        done
         echo "Solution: ${solution}"
+        echo "Runtime: ${runtime}"
         echo "-----------------------"
 
-        # save map and solution to file
-        echo "${map}" > "${dir_path}solutions/solution_${filename}.txt"
-        echo "${solution}" >> "${dir_path}solutions/solution_${filename}.txt"
+        # Save map and solution to file
+        echo "Map:" > "sokobanLevels/solutions/solution_${filename}.txt"
+        printf '%s\n' "${map[@]}" >> "sokobanLevels/solutions/solution_${filename}.txt"
+        echo "Solution: ${solution}" >> "sokobanLevels/solutions/solution_${filename}.txt"
+        echo "Runtime: ${runtime}" >> "sokobanLevels/solutions/solution_${filename}.txt"
     fi
 done
 
