@@ -43,10 +43,10 @@ For a version that skips existing files that have a solution file already. If yo
  
  ## Unpack dataset
  
- You will probably have to unpack the dataset. If it's the tar file then run the following:
+ You will probably have to unpack the dataset. If it's the tar file then run the following (so the output is under sokobanLevels):
  
  ```
- tar -xzvf directory.tar.gz
+ tar -xzvf sok_files.tar.gz
 ```
 Followd by:
 
