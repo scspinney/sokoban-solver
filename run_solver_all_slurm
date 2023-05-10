@@ -1,0 +1,43 @@
+#!/bin/bash
+#SBATCH --time=3:00:00
+#SBATCH --array=1-5
+
+# #SBATCH --array=1-$(find sokobanLevels/ -maxdepth 1 -type f | wc -l)%10
+
+echo "Starting task $SLURM_ARRAY_TASK_ID"
+FILES=(sokobanLevels/level[0-9]*.txt)
+
+# Extract filename from the full path of the file
+filename=$(basename -- "${FILES[$SLURM_ARRAY_TASK_ID-1]}")
+
+# Remove the file extension from the filename
+filename="${filename%.*}"
+
+# Print spacer before output
+echo "-----------------------"
+echo "Level: ${filename}"
+echo "-----------------------"
+
+# Run the Python script and redirect the output to a variable
+result=$(python sokoban.py -l "$filename.txt" -m astar)
+
+# Split the output into map and solution
+IFS=$'\n' read -rd '' -a output_lines <<< "$result"
+map=("${output_lines[@]:0:7}")
+solution="${output_lines[7]}"
+runtime="${output_lines[8]}"
+
+# Print output and spacer before saving to file
+echo "Map: "
+for i in "${map[@]}"; do
+    echo "$i"
+done
+echo "Solution: ${solution}"
+echo "Runtime: ${runtime}"
+echo "-----------------------"
+
+# Save map and solution to file
+echo "Map:" > "sokobanLevels/solutions/solution_${filename}.txt"
+printf '%s\n' "${map[@]}" >> "sokobanLevels/solutions/solution_${filename}.txt"
+echo "Solution: ${solution}" >> "sokobanLevels/solutions/solution_${filename}.txt"
+echo "Runtime: ${runtime}" >> "sokobanLevels/solutions/solution_${filename}.txt"
