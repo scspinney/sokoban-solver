@@ -20,4 +20,11 @@ python sokoban.py -l level0.txt -m astar
 
 ```
 
-It will print the solution to the terminal, and also save to sokobanLevels/solutions
+It will print the solution to the terminal, and also save to sokobanLevels/solutions. To run the slurm script as an array job you can run:
+
+```
+sbatch run_solver_all_slurm
+
+```
+
+and inside that script you can change the number of jobs (default: 1-5).
