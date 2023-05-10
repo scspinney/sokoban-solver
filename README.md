@@ -1,5 +1,5 @@
 # sokoban-solver
-Sokoban solver written in python with accompanying SLURM scripts.
+Sokoban solver written in python with accompanying SLURM scripts. Modified from: https://github.com/KnightofLuna/sokoban-solver/blob/master/sokoban.py
 
 
 ## Installtion on SLURM
