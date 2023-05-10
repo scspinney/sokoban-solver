@@ -41,3 +41,16 @@ For a version that skips existing files that have a solution file already. If yo
  bash run_solver_all
  ```
  
+ ## Unpack dataset
+ 
+ You will probably have to unpack the dataset. If it's the tar file then run the following:
+ 
+ ```
+ tar -xzvf directory.tar.gz
+```
+Followd by:
+
+```
+python create_dataset.py
+```
+ 
