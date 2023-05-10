@@ -30,4 +30,9 @@ It will print the solution to the terminal, and also save to sokobanLevels/solut
 sbatch --array=1-$(find sokobanLevels/ -maxdepth 1 -type f | wc -l) run_solver_all_slurm
 ```
 
-and inside that script you can change the number of jobs (default: 10) that are run simultaneously.
+and inside that script you can change the number of jobs (default: 10) that are run simultaneously. OR 
+
+```
+sbatch --array=1-$(find sokobanLevels/ -maxdepth 1 -type f | wc -l) run_solver_all_slurm_safe
+```
+For a version that skips existing files that have a solution file already.
