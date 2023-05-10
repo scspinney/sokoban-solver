@@ -1,8 +1,6 @@
 #!/bin/bash
 #SBATCH --time=3:00:00
-#SBATCH --array=1-5
-
-# #SBATCH --array=1-$(find sokobanLevels/ -maxdepth 1 -type f | wc -l)%10
+#SBATCH --ntasks=10
 
 echo "Starting task $SLURM_ARRAY_TASK_ID"
 FILES=(sokobanLevels/level[0-9]*.txt)
