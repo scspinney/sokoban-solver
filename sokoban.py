@@ -3,6 +3,7 @@ import collections
 import numpy as np
 import heapq
 import time
+import os
 
 class PriorityQueue:
     """Define a PriorityQueue data structure that will be used"""
@@ -255,12 +256,16 @@ def readCommand(argv):
     parser = OptionParser()
     parser.add_option('-l', '--level', dest='sokobanLevels',
                       help='level of game to play', default='level1.txt')
+    parser.add_option('-d', '--leveldir', dest="leveldir",
+                      help='dir of level of game to play')
+
     parser.add_option('-m', '--method', dest='agentMethod',
                       help='research method', default='bfs')
     args = dict()
     options, _ = parser.parse_args(argv)
-    with open('sokobanLevels/'+options.sokobanLevels,"r") as f: 
+    with open(os.path.join(options.leveldir,options.sokobanLevels),"r") as f: 
         layout = f.readlines()
+
     args['layout'] = layout
     args['method'] = options.agentMethod
     return args

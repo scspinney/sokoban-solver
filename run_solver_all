@@ -1,11 +1,25 @@
 #!/bin/bash
 
 # set the directory path
-dir_path="sokobanLevels/"
+current_batch_dir="/home/spinney/scratch/sokoban-solver/sokobanLevels/batch11/"
+
+# Extract the batch number from the current batch directory
+batchnum=$(basename -- "$current_batch_dir")
+
+# Create the solutions directory for the current batch if it doesn't exist
+solutions_dir="/home/spinney/scratch/sokoban-solver/solutions/${batchnum}"
+
+if [ ! -d "$solutions_dir" ]; then
+    mkdir -p "$solutions_dir"
+fi
+
 
 # iterate over the files and read their contents using Python
-for filepath in "$dir_path"*
+#for filepath in /home/spinney/scratch/sokoban-solver/sokoban-solver/sokobanLevels/sok_files/batch211/*.txt
+find "$current_batch_dir" -type f -print0 | while IFS= read -r -d '' filepath
 do
+
+    echo "${filepath}"
     # check if the item is a file
     if [ -f "$filepath" ]; then
         # extract the filename from the full path
@@ -13,9 +27,10 @@ do
 
         # remove the file extension from the filename
         filename="${filename%.*}"
+        sol_file="${solutions_dir}/solution_${filename}.txt"
         # Check if a solution file already exists
-        if [ -f "sokobanLevels/solutions/solution_${filename}.txt" ]; then
-            echo "Solution file already exists for ${filename}. Skipping this file."
+        if [ -f "${sol_file}" ]; then
+            echo "Solution file already exists for ${sol_file}. Skipping this file."
             continue
         fi
 
@@ -25,7 +40,7 @@ do
         echo "-----------------------"
 
         # run the Python script and redirect the output to a file
-        result=$(python sokoban.py -l "$filename.txt" -m astar)
+        result=$(python sokoban.py -l "$filename.txt" -d "$current_batch_dir" -m astar)
         # Split the output into map and solution
         IFS=$'\n' read -rd '' -a output_lines <<< "$result"
         map=("${output_lines[@]:0:7}")
@@ -42,10 +57,10 @@ do
         echo "-----------------------"
 
         # Save map and solution to file
-        echo "Map:" > "sokobanLevels/solutions/solution_${filename}.txt"
-        printf '%s\n' "${map[@]}" >> "sokobanLevels/solutions/solution_${filename}.txt"
-        echo "Solution: ${solution}" >> "sokobanLevels/solutions/solution_${filename}.txt"
-        echo "Runtime: ${runtime}" >> "sokobanLevels/solutions/solution_${filename}.txt"
+        echo "Map:" > "${sol_file}"
+        printf '%s\n' "${map[@]}" >> "${sol_file}"
+        echo "Solution: ${solution}" >> "${sol_file}"
+        echo "Runtime: ${runtime}" >> "${sol_file}"
     fi
 done
 

@@ -1,0 +1,66 @@
+#!/bin/bash
+
+# Set the base directory path
+base_dir="/home/spinney/scratch/sokoban-solver/sokobanLevels"
+
+# Iterate over the batch directories
+for current_batch_dir in "$base_dir"/batch*; do
+    # Extract the batch number from the current batch directory
+    batchnum=$(basename -- "$current_batch_dir")
+
+    # Create the solutions directory for the current batch if it doesn't exist
+    solutions_dir="/home/spinney/scratch/sokoban-solver/solutions/${batchnum}"
+
+    if [ ! -d "$solutions_dir" ]; then
+        mkdir -p "$solutions_dir"
+    fi
+
+    # Iterate over the files in the current batch directory
+    find "$current_batch_dir" -type f -print0 | while IFS= read -r -d '' filepath; do
+
+        echo "${filepath}"
+        # Check if the item is a file
+        if [ -f "$filepath" ]; then
+            # Extract the filename from the full path
+            filename=$(basename -- "$filepath")
+
+            # Remove the file extension from the filename
+            filename="${filename%.*}"
+            sol_file="${solutions_dir}/solution_${filename}.txt"
+            # Check if a solution file already exists
+            if [ -f "${sol_file}" ]; then
+                echo "Solution file already exists for ${sol_file}. Skipping this file."
+                continue
+            fi
+
+            # Print spacer before output
+            echo "-----------------------"
+            echo "Level: ${filename}"
+            echo "-----------------------"
+
+            # Run the Python script and redirect the output to a file
+            result=$(python sokoban.py -l "$filename.txt" -d "$current_batch_dir" -m astar)
+            # Split the output into map and solution
+            IFS=$'\n' read -rd '' -a output_lines <<< "$result"
+            map=("${output_lines[@]:0:7}")
+            solution="${output_lines[7]}"
+            runtime="${output_lines[8]}"
+
+            # Print output and spacer before saving to file
+            echo "Map: "
+            for i in "${map[@]}"; do
+                echo "$i"
+            done
+            echo "Solution: ${solution}"
+            echo "Runtime: ${runtime}"
+            echo "-----------------------"
+
+            # Save map and solution to file
+            echo "Map:" > "${sol_file}"
+            printf '%s\n' "${map[@]}" >> "${sol_file}"
+            echo "Solution: ${solution}" >> "${sol_file}"
+            echo "Runtime: ${runtime}" >> "${sol_file}"
+        fi
+    done
+done
+
