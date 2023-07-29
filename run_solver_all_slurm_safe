@@ -1,9 +1,11 @@
-#!/bin/bash
 #SBATCH --time=3:00:00
 #SBATCH --ntasks=10
 
+# Set the directory of the text files
+directory="sokobanLevels/sok_files"
+
 echo "Starting task $SLURM_ARRAY_TASK_ID"
-FILES=(sokobanLevels/level[0-9]*.txt)
+FILES=("$directory"/[0-9].sok)
 
 # Extract filename from the full path of the file
 filename=$(basename -- "${FILES[$SLURM_ARRAY_TASK_ID-1]}")
@@ -11,8 +13,9 @@ filename=$(basename -- "${FILES[$SLURM_ARRAY_TASK_ID-1]}")
 # Remove the file extension from the filename
 filename="${filename%.*}"
 
+
 # Check if a solution file already exists
-if [ -f "sokobanLevels/solutions/solution_${filename}.txt" ]; then
+if [ -f "$directory/solutions/solution_${filename}.txt" ]; then
     echo "Solution file already exists for ${filename}. Skipping this file."
     exit 0
 fi
@@ -23,7 +26,7 @@ echo "Level: ${filename}"
 echo "-----------------------"
 
 # Run the Python script and redirect the output to a variable
-result=$(python sokoban.py -l "$filename.txt" -m astar)
+result=$(python sokoban.py -l "$directory/$filename.sok" -m astar)
 
 # Split the output into map and solution
 IFS=$'\n' read -rd '' -a output_lines <<< "$result"

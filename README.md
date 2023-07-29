@@ -24,6 +24,31 @@ python sokoban.py -l level0.txt -m astar
 
 ```
 
+## Updated info
+
+Instructions for dataset creation Sokoban
+
+1. Create levels using generate_maps.py under sokoban-gym (core)
+
+2. Compress the maps into a tar file on Mila cluster and transfer to Cedar
+
+3. Uncompress dataset, and run create_solver_dataset.sh to create all the sok files used by the solver, with the appropriate header
+
+4. Run create_dataset.py (or _mp version, maybe also compress_existing_batches_mp.py if running after) which takes each sok file, splits each level into an individual file, then compresses the directory as a batch with batch_num
+
+5. Combine all batches into one zipped file by running combine_batches.py and getting a combined_batches.zip file
+
+6. Run the solver on the zipped combined file: solve_zipped_dataset.py. This takes in the combined_batches.zip file, processes each batch found in the zipped file using multiprocessing in batches, compresses the solution into solutions_zipped subdirectory (sokobanLevels), then removes the tmp unzipped directory used by the solver (sokoban.py). This takes time. A progress bar is shown.
+
+7. Run X.py to combine all the solutions from each batch into one combined_solutions.zip file
+
+
+
+
+X. Combine solutions into single file
+
+## Older info
+
 It will print the solution to the terminal, and also save to sokobanLevels/solutions. To run the slurm script as an array job you can run:
 
 ```
@@ -52,5 +77,6 @@ Followd by:
 
 ```
 python create_dataset.py
+
 ```
  

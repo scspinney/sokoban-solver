@@ -10,10 +10,13 @@ for current_batch_dir in "$base_dir"/batch*; do
 
     # Create the solutions directory for the current batch if it doesn't exist
     solutions_dir="/home/spinney/scratch/sokoban-solver/solutions/${batchnum}"
+    zip_file="${solutions_dir}.zip"
 
-    if [ ! -d "$solutions_dir" ]; then
-        mkdir -p "$solutions_dir"
+    if [ -d "$solutions_dir" ] || [ -f "$zip_file" ]; then
+        continue
     fi
+
+    mkdir -p "$solutions_dir"
 
     # Iterate over the files in the current batch directory
     find "$current_batch_dir" -type f -print0 | while IFS= read -r -d '' filepath; do
